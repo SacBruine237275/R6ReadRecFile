@@ -22,7 +22,7 @@ namespace R6ReadRecFile.CLI
                 var rec = recParser.Parse(pathFile);
                 foreach (var player in rec.Players)
                 {
-                    Console.WriteLine($"Pseudo: {player.Name} | Operator: {player.Operator} | Team: {player.Team} Team");
+                    Console.WriteLine($"Pseudo: {player.Name} | Operator: {player.Operator} | Team: {player.Team}");
                 }
             }
             catch (Exception ex)
