@@ -25,18 +25,6 @@ jobs:
       - name: Build and Publish
         run: dotnet publish R6ReadRecFile.CLI -c Release -o ./publish
 
-      - name: Create Tag Automatically
-        id: create_tag
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          TAG="v0.1.1"
-          echo "Tag to create: $TAG"
-          git tag $TAG
-          git push origin $TAG
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
