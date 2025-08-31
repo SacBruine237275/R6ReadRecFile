@@ -28,7 +28,7 @@
 
 2.  **Run the application:**
     ```bash
-    dotnet run --project src/R6ReadRecFile.ConsoleApp -- "PATH/TO/YOUR/FILE.rec"
+   dotnet run --project R6ReadRecFile.CLI -- "PATH/TO/YOUR/FILE.rec"
     ```
 
 ## 🤝 How to Contribute
@@ -69,7 +69,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for more 
 
 2.  **Lancez l'application :**
     ```bash
-    dotnet run --project src/R6ReadRecFile.ConsoleApp -- "CHEMIN_VERS_VOTRE_FICHIER.rec"
+    dotnet run --project R6ReadRecFile.CLI -- "CHEMIN_VERS_VOTRE_FICHIER.rec"
     ```
 
 ## 🤝 Comment Contribuer
