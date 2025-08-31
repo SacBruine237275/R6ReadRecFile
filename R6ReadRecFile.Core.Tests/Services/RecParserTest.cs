@@ -19,13 +19,33 @@ namespace R6ReadRecFile.Core.Tests.Services
         public void Parse_ShouldReturnPlayers_WhenFileIsValid()
         {
             List<PlayerInfo> expected = new List<PlayerInfo> {
-                new PlayerInfo{Name="Name1"},
-                new PlayerInfo{Name="Name2"}
+                new PlayerInfo{Name="Name1",Operator="LESION",Team="ENEMY TEAM"},
+                new PlayerInfo{Name="Name2",Operator="HIBANA",Team="YOUR TEAM"}
             };
             var tempFile = Path.GetTempFileName();
-            
 
-            var fakeContent = System.Text.Encoding.ASCII.GetBytes("playername\0Name1\0playername\0Name2\0");
+
+            var fakeContent = System.Text.Encoding.ASCII.GetBytes(
+             "teamname0\0ENEMY TEAM\0" +
+             "playerid\0id\0" +
+             "profileid\0id\0" +
+             "playername\0Name1\0" +
+             "team\00\0" +
+             "other\0ignored\0" +
+             "other\0ignored\0" +
+             "other\0ignored\0" +
+             "operator\0LESION\0" +
+
+             "teamname1\0YOUR TEAM\0" +
+             "playerid\0id\0" +
+             "profileid\0id\0" +
+             "playername\0Name2\0" +
+             "team\01\0" +
+             "other\0ignored\0" +
+             "other\0ignored\0" +
+             "other\0ignored\0" +
+             "operator\0HIBANA\0"
+            );
             File.WriteAllBytes(tempFile, fakeContent);
 
             var parser = new RecParser();
@@ -36,6 +56,8 @@ namespace R6ReadRecFile.Core.Tests.Services
             Assert.NotNull(actual.Players);
             Assert.Equal(expected.Count, actual.Players.Count);
             Assert.All(expected, expectedItem => Assert.Contains(actual.Players, actualItem => actualItem.Name == expectedItem.Name));
+            Assert.All(expected, expectedItem => Assert.Contains(actual.Players, actualItem => actualItem.Operator == expectedItem.Operator));
+            Assert.All(expected, expectedItem => Assert.Contains(actual.Players, actualItem => actualItem.Team == expectedItem.Team));
 
             File.Delete(tempFile);
         }

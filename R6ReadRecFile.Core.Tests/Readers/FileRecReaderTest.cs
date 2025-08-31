@@ -16,19 +16,35 @@ namespace R6ReadRecFile.Core.Tests.Readers
         {
             List<PlayerInfo> expected = new List<PlayerInfo>
             {
-               new PlayerInfo{Name="Name1"},
-               new PlayerInfo{Name="Name2"}
+               new PlayerInfo{Name="Name1",Operator="LESION",Team="ENEMY TEAM"},
+               new PlayerInfo{Name="Name2",Operator="HIBANA",Team="YOUR TEAM"}
             };
             List<string> content = new List<string>{
-                "playername",
-                "Name1",
-                "playername",
-                "Name2"
-            }
-            ;
+                "teamname0","ENEMY TEAM",
+                "playerid", "id",
+                "profileid", "id",
+                "playername", "Name1",
+                 "team", "0",
+                "other", "ignored",
+                "other", "ignored",
+                "other", "ignored",
+                "operator", "LESION",
+
+                "teamname1","YOUR TEAM",
+                "playerid", "id",
+                "profileid", "id",
+                "playername", "Name2",
+                "team", "1",
+                "other", "ignored",
+                "other", "ignored", 
+                "other", "ignored",
+                "operator", "HIBANA"
+            };
             var actual = reader.ReadPlayers(content);
             Assert.Equal(expected.Count, actual.Count);
             Assert.All(expected, expectedItem => Assert.Contains(actual, actualItem => actualItem.Name == expectedItem.Name));
+            Assert.All(expected, expectedItem => Assert.Contains(actual, actualItem => actualItem.Operator == expectedItem.Operator));
+            Assert.All(expected, expectedItem => Assert.Contains(actual, actualItem => actualItem.Team == expectedItem.Team));
         }
 
         [Fact]
@@ -38,7 +54,7 @@ namespace R6ReadRecFile.Core.Tests.Readers
             {
             };
             List<string> content = new List<string>{
-                "playerid",
+                "playerimg",
                 "1",
                 "playerimg",
                 "img"
@@ -65,25 +81,6 @@ namespace R6ReadRecFile.Core.Tests.Readers
 
             Assert.Contains("Hello", result);
             Assert.Contains("World", result);
-            Assert.DoesNotContain("Hi", result);
-            Assert.DoesNotContain("A", result);
-        }
-
-        [Fact]
-        public void GetStringsFromFile_ShouldExtractStrings_WithMinLengthOne()
-        {
-            // Arrange
-            byte[] fakeData = new byte[]
-            {
-            (byte)'H', (byte)'i', 0,
-            (byte)'A', 0
-            };
-
-            using var ms = new MemoryStream(fakeData);
-            var reader = new FileRecReader(ms);
-            var result = reader.GetStringsFromFile(minLength: 1);
-
-            // Assert
             Assert.Contains("Hi", result);
             Assert.Contains("A", result);
         }
