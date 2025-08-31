@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R6ReadRecFile.Core", "R6Rea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R6ReadRecFile.CLI", "R6ReadRecFile.CLI\R6ReadRecFile.CLI.csproj", "{6FFBB65A-0491-461D-880E-3D0245F794DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R6ReadRecFile.Core.Tests", "R6ReadRecFile.Core.Tests\R6ReadRecFile.Core.Tests.csproj", "{F78D2538-76D4-410A-87A6-A337B48DD71F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F78D2538-76D4-410A-87A6-A337B48DD71F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F78D2538-76D4-410A-87A6-A337B48DD71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F78D2538-76D4-410A-87A6-A337B48DD71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F78D2538-76D4-410A-87A6-A337B48DD71F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

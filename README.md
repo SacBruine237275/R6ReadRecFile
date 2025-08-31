@@ -28,7 +28,7 @@
 
 2.  **Run the application:**
     ```bash
-   dotnet run --project R6ReadRecFile.CLI -- "PATH/TO/YOUR/FILE.rec"
+    dotnet run --project R6ReadRecFile.CLI -- "PATH/TO/YOUR/FILE.rec"
     ```
 
 ## 🤝 How to Contribute

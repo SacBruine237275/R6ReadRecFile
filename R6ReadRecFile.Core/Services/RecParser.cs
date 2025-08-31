@@ -12,8 +12,7 @@ namespace R6ReadRecFile.Core.Services
             {
                 throw new FileNotFoundException($"Error: file '{filePath}' not found.");
             }
-            Console.WriteLine($"[DEBUG] Trying to open: {Path.GetFullPath(filePath)}");
-            var file = new FileStream(filePath, FileMode.Open);
+            using var file = new FileStream(filePath, FileMode.Open);
             var reader = new FileRecReader(file);
 
             var recFile = new RecFile();
