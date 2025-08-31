@@ -17,14 +17,17 @@ namespace R6ReadRecFile.Core.Readers
         public List<PlayerInfo> ReadPlayers(List<string> extractedStrings)
         {
             List<PlayerInfo>players = new List<PlayerInfo>();
-            for(int i = 0; i < extractedStrings.Count; i++)
+            string teamName0 = extractedStrings[extractedStrings.IndexOf("teamname0") + 1]; //The team numbers may vary from one file to another, so we retrieve the name of team number 0
+            string teamName1 = extractedStrings[extractedStrings.IndexOf("teamname1") + 1]; //The team numbers may vary from one file to another, so we retrieve the name of team number 1
+            for (int i = 0; i < extractedStrings.Count; i++)
             {
                 if(extractedStrings[i] == "playerid")
                 {
                     PlayerInfo player = new PlayerInfo();
                     player.Name = extractedStrings[i + 5]; //Shift by 5 to get the name
                     int teamValue = Int32.Parse(extractedStrings[i + 7]);//Shift by 5 to get team
-                    player.Team = Enum.IsDefined(typeof(Team), teamValue) ? (Team)teamValue : Team.Unknow;
+                    string playerTeamName = teamValue == 0 ? teamName0 : teamName1;
+                    player.Team = playerTeamName;
                     player.Operator = extractedStrings[i + 15]; //We shift by 15 to get the operator's name
                     players.Add(player);
                 }
