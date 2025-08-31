@@ -9,6 +9,8 @@ jobs:
   build-release:
     name: Build Release & Publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -25,12 +27,34 @@ jobs:
       - name: Build and Publish
         run: dotnet publish R6ReadRecFile.CLI -c Release -o ./publish
 
+      - name: Get latest release version
+        id: get_version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const latestRelease = releases.find(release => release.tag_name.startsWith('v'));
+            
+            let newVersion = 'v0.1.0';
+            if (latestRelease) {
+              const latestTag = latestRelease.tag_name;
+              const versionParts = latestTag.replace('v', '').split('.').map(Number);
+              versionParts[2]++; // Incrémente le dernier numéro de version (patch)
+              newVersion = `v${versionParts.join('.')}`;
+            }
+            
+            core.setOutput('new_version', newVersion);
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v0.1.1
-          name: Release v0.1.1
+          tag_name: ${{ steps.get_version.outputs.new_version }}
+          name: Release ${{ steps.get_version.outputs.new_version }}
           body: "Automatic release from main branch."
           files: ./publish/*
         env:
