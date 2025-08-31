@@ -19,17 +19,20 @@ namespace R6ReadRecFile.Core.Readers
             List<PlayerInfo>players = new List<PlayerInfo>();
             for(int i = 0; i < extractedStrings.Count; i++)
             {
-                if(extractedStrings[i] == "playername")
+                if(extractedStrings[i] == "playerid")
                 {
                     PlayerInfo player = new PlayerInfo();
-                    player.Name = extractedStrings[i + 1];
+                    player.Name = extractedStrings[i + 5]; //Shift by 5 to get the name
+                    int teamValue = Int32.Parse(extractedStrings[i + 7]);//Shift by 5 to get team
+                    player.Team = Enum.IsDefined(typeof(Team), teamValue) ? (Team)teamValue : Team.Unknow;
+                    player.Operator = extractedStrings[i + 15]; //We shift by 15 to get the operator's name
                     players.Add(player);
                 }
             }
             return players;
         }
 
-        public IEnumerable<string> GetStringsFromFile(int minLength = 3)
+        public IEnumerable<string> GetStringsFromFile()
         {
             _reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
@@ -37,7 +40,7 @@ namespace R6ReadRecFile.Core.Readers
             _reader.BaseStream.CopyTo(ms);
             byte[] data = ms.ToArray();
 
-            return BinaryHelper.ExtractStrings(data, minLength);
+            return BinaryHelper.ExtractStrings(data);
         }
     }
 }
