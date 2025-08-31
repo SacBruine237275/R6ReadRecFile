@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R6ReadRecFile.Core", "R6ReadRecFile.Core\R6ReadRecFile.Core.csproj", "{620E5452-B6D8-41B3-895D-2FC655026723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R6ReadRecFile.CLI", "R6ReadRecFile.CLI\R6ReadRecFile.CLI.csproj", "{6FFBB65A-0491-461D-880E-3D0245F794DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{620E5452-B6D8-41B3-895D-2FC655026723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{620E5452-B6D8-41B3-895D-2FC655026723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{620E5452-B6D8-41B3-895D-2FC655026723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{620E5452-B6D8-41B3-895D-2FC655026723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FFBB65A-0491-461D-880E-3D0245F794DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68F5615F-796F-4676-90BA-F1ABE31BBA5D}
+	EndGlobalSection
+EndGlobal
