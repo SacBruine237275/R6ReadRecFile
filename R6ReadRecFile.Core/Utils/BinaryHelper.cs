@@ -4,7 +4,7 @@ namespace R6ReadRecFile.Core.Utils
 {
     public class BinaryHelper
     {
-        public static IEnumerable<string> ExtractStrings(byte[] data, int minLength = 3)
+        public static IEnumerable<string> ExtractStrings(byte[] data)
         {
             var results = new List<string>();
             var sb = new StringBuilder();
@@ -17,7 +17,7 @@ namespace R6ReadRecFile.Core.Utils
                 }
                 else
                 {
-                    if (sb.Length >= minLength)
+                    if (sb.Length > 0)
                         results.Add(sb.ToString());
                     sb.Clear();
                 }
