@@ -20,9 +20,10 @@ namespace R6ReadRecFile.CLI
             {
                 IRecParser recParser = new RecParser();
                 var rec = recParser.Parse(pathFile);
+                Console.WriteLine(rec.Metadata.ToString() + "\n");
                 foreach (var player in rec.Players)
                 {
-                    Console.WriteLine($"Pseudo: {player.Name} | Operator: {player.Operator} | Team: {player.Team}");
+                    Console.WriteLine(player.ToString());
                 }
             }
             catch (Exception ex)
