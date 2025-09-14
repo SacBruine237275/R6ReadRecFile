@@ -6,13 +6,8 @@ namespace R6ReadRecFile.Core.Services
 {
     public class RecParser : IRecParser
     {
-        public RecFile Parse(string filePath)
+        public RecFile Parse(FileStream file)
         {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"Error: file '{filePath}' not found.");
-            }
-            using var file = new FileStream(filePath, FileMode.Open);
             var reader = new FileRecReader(file);
 
             var recFile = new RecFile();
