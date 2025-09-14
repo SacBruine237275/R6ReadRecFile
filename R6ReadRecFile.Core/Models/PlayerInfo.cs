@@ -1,4 +1,6 @@
-﻿namespace R6ReadRecFile.Core.Models
+﻿using System.Numerics;
+
+namespace R6ReadRecFile.Core.Models
 {
     public class PlayerInfo
     {
@@ -9,5 +11,9 @@
         public int Death { get; set; }
         public int Assist { get; set; }*/
 
+        public override string ToString()
+        {
+            return $"Pseudo: {Name} | Operator: {Operator} | Team: {Team}";
+        }
     }
 }

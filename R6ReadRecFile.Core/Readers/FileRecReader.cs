@@ -1,4 +1,5 @@
-﻿using R6ReadRecFile.Core.Models;
+﻿using R6ReadRecFile.Core.Enums;
+using R6ReadRecFile.Core.Models;
 using R6ReadRecFile.Core.Utils;
 using System.IO;
 
@@ -35,6 +36,22 @@ namespace R6ReadRecFile.Core.Readers
             return players;
         }
 
+
+        public GameMetadata ReadGameMetadata(List<string> extractedStrings)
+        {
+            var gameMetadata= new GameMetadata();
+            for(int i = 0; i < extractedStrings.Count; i++)
+            {
+                if(extractedStrings[i] == "version")
+                {
+                    gameMetadata.Version = extractedStrings[i + 1];
+                    gameMetadata.DateTime = extractedStrings[i + 5];
+                    gameMetadata.Mode =(GameMode) int.Parse(extractedStrings[i + 7]);
+                    gameMetadata.Map =(Map) long.Parse(extractedStrings[i + 9]);
+                }
+            }
+            return gameMetadata;
+        }
         public IEnumerable<string> GetStringsFromFile()
         {
             _reader.BaseStream.Seek(0, SeekOrigin.Begin);

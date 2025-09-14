@@ -18,6 +18,7 @@ namespace R6ReadRecFile.Core.Services
             var recFile = new RecFile();
             var extractedStrings = reader.GetStringsFromFile().ToList();
             recFile.Players = reader.ReadPlayers(extractedStrings);
+            recFile.Metadata=reader.ReadGameMetadata(extractedStrings);
             return recFile;
         }
     }
