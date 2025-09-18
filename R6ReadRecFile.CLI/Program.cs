@@ -1,4 +1,4 @@
-﻿using R6ReadRecFile.Core.Interfaces;
+using R6ReadRecFile.Core.Interfaces;
 using R6ReadRecFile.Core.Models;
 using R6ReadRecFile.Core.Services;
 using System.Text.Json;

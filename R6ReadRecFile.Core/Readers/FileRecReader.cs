@@ -1,4 +1,4 @@
-﻿using R6ReadRecFile.Core.Enums;
+using R6ReadRecFile.Core.Enums;
 using R6ReadRecFile.Core.Models;
 using R6ReadRecFile.Core.Utils;
 using System.IO;
