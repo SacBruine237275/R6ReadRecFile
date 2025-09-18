@@ -27,14 +27,17 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build and Publish
-        run: dotnet publish R6ReadRecFile.CLI -c Release -o ./publish
+      - name: Publish Linux
+        run: |
+          dotnet publish R6ReadRecFile.CLI -c Release -r linux-x64 --self-contained true -o ./publish/linux
+          zip -r release-linux.zip ./publish/linux
+          tar -czf release-linux.tar.gz -C ./publish linux
 
-      - name: Package Release Files (ZIP)
-        run: zip -r release.zip ./publish
-
-      - name: Package Release Files (TAR.GZ)
-        run: tar -czf release.tar.gz ./publish
+      - name: Publish Windows
+        run: |
+          dotnet publish R6ReadRecFile.CLI -c Release -r win-x64 --self-contained true -o ./publish/windows
+          zip -r release-windows.zip ./publish/windows
+          tar -czf release-windows.tar.gz -C ./publish windows
 
       - name: Create Release
         id: create_release
@@ -44,7 +47,9 @@ jobs:
           name: Release v0.1.4
           body: "Automatic release from main branch."
           files: |
-            release.zip
-            release.tar.gz
+            release-linux.zip
+            release-linux.tar.gz
+            release-windows.zip
+            release-windows.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
