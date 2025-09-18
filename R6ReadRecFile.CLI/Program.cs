@@ -9,7 +9,7 @@ namespace R6ReadRecFile.CLI
     {
         public static void Main(string[] args)
         {
-            if (args.Length == 0 || args.Contains("-help"))
+            if (args.Length == 0 || args.Contains("-help") || args.Contains("-h"))
             {
                 ShowHelp();
                 return;
@@ -17,6 +17,7 @@ namespace R6ReadRecFile.CLI
             bool recursive = false;
             string? jsonFile = null;
             string? pathFile = null;
+            bool silent = false;
 
             for (int i = 0; i < args.Length; i++)
             {
@@ -33,6 +34,10 @@ namespace R6ReadRecFile.CLI
                             i++;
                         }
                         break;
+                    case "-silent":
+                    case "-s":
+                        silent = true;
+                        break;
 
                     default:
                         pathFile = args[i];
@@ -48,42 +53,43 @@ namespace R6ReadRecFile.CLI
                     jsonFile = Path.Combine(folder, "output.json");
                 }
             }
-                try
+            try
+            {
+                List<RecFile> allRecFiles = new List<RecFile>();
+                if (recursive)
                 {
-                    List<RecFile> allRecFiles = new List<RecFile>();
-                    if (recursive)
+                    if (!Directory.Exists(pathFile))
                     {
-                        if (!Directory.Exists(pathFile))
-                        {
-                            throw new DirectoryNotFoundException($"Error: folder '{pathFile}' not found.");
-                        }
-                        string[] recFiles = Directory.GetFiles(pathFile);
-                        foreach (string recFile in recFiles)
-                        {
-                            var rec = DisplayRecFile(recFile, jsonFile);
-                            allRecFiles.Add(rec);
-                        }
+                        throw new DirectoryNotFoundException($"Error: folder '{pathFile}' not found.");
                     }
-                    else
+                    string[] recFiles = Directory.GetFiles(pathFile);
+                    foreach (string recFile in recFiles)
                     {
-                        var rec = DisplayRecFile(pathFile, jsonFile);
+                        var rec = DisplayRecFile(recFile, jsonFile, silent);
                         allRecFiles.Add(rec);
                     }
-                    if (!string.IsNullOrEmpty(jsonFile))
-                    {
-                        string jsonString;
-                        jsonString = JsonSerializer.Serialize<List<RecFile>>(allRecFiles, new JsonSerializerOptions { WriteIndented = true });
-                        File.WriteAllText(jsonFile, jsonString);
-                        Console.WriteLine($"JSON output saved to: {jsonFile}");
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex.ToString());
+                    var rec = DisplayRecFile(pathFile, jsonFile, silent);
+                    allRecFiles.Add(rec);
+                }
+                if (!string.IsNullOrEmpty(jsonFile))
+                {
+                    string jsonString;
+                    jsonString = JsonSerializer.Serialize<List<RecFile>>(allRecFiles, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(jsonFile, jsonString);
+                    if (!silent)
+                        Console.WriteLine($"JSON output saved to: {jsonFile}");
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
 
-        private static RecFile DisplayRecFile(string? pathFile, string? jsonFile)
+        private static RecFile DisplayRecFile(string? pathFile, string? jsonFile, bool silent)
         {
             IRecParser recParser = new RecParser();
             if (!File.Exists(pathFile))
@@ -92,12 +98,15 @@ namespace R6ReadRecFile.CLI
             }
             using var file = new FileStream(pathFile, FileMode.Open);
             var rec = recParser.Parse(file);
-            Console.WriteLine(rec.Metadata.ToString() + "\n");
-            foreach (var player in rec.Players)
+            if (!silent)
             {
-                Console.WriteLine(player.ToString());
+                Console.WriteLine(rec.Metadata.ToString() + "\n");
+                foreach (var player in rec.Players)
+                {
+                    Console.WriteLine(player.ToString());
+                }
+                Console.WriteLine("\n");
             }
-            Console.WriteLine("\n");
             return rec;
 
         }
@@ -109,7 +118,10 @@ namespace R6ReadRecFile.CLI
             Console.WriteLine("-json     Generate a JSON output. You can optionally specify the JSON file name.");
             Console.WriteLine("          If no JSON file name is provided, the output will be created in the execution folder.");
             Console.WriteLine("          If a name is specified that name will be used. Otherwise a default name will be assigned.\n");
+            Console.WriteLine("-silent   Suppress all console output. Useful with -json to only write data to a file.");
+            Console.WriteLine("          Short form: -s\n");
             Console.WriteLine("-help     Show this help message.");
+            Console.WriteLine("          Short form: -h");
         }
     }
 }
