@@ -1,4 +1,7 @@
-﻿namespace R6ReadRecFile.Core.Enums
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace R6ReadRecFile.Core.Enums
 {
     public enum Map : long
     {
@@ -43,6 +46,19 @@
                 Map.NighthavenLabs => "Nighthaven Labs",
                 _ => map.ToString()
             };
+        }
+    }
+
+    public class MapConverter : JsonConverter<Map>
+    {
+        public override Map Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, Map value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.GetDisplayName());
         }
     }
 }
