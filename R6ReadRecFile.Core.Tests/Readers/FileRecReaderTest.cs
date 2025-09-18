@@ -1,4 +1,5 @@
-﻿using R6ReadRecFile.Core.Models;
+﻿using R6ReadRecFile.Core.Enums;
+using R6ReadRecFile.Core.Models;
 using R6ReadRecFile.Core.Readers;
 
 namespace R6ReadRecFile.Core.Tests.Readers
@@ -83,6 +84,41 @@ namespace R6ReadRecFile.Core.Tests.Readers
             Assert.Contains("World", result);
             Assert.Contains("Hi", result);
             Assert.Contains("A", result);
+        }
+
+        [Fact]
+        public void ReadGameMetadata_ShouldParseAllFieldsCorrectly()
+        {
+            string versionExpected = "1.2.3";
+            string dateExpected = "2025-09-11-21-15-25";
+
+            var fakeData = new List<string>
+            {
+                "version", "1.2.3", "ignore1", "ignore2", "DateTime", "2025-09-11-21-15-25",
+                "GameModeId", "1",
+                "MapId", "413845419788"
+            };
+
+            
+            GameMetadata gameMetadata = reader.ReadGameMetadata(fakeData);
+
+            Assert.Equal(versionExpected, gameMetadata.Version);
+            Assert.Equal(dateExpected, gameMetadata.DateTime);
+            Assert.Equal(GameMode.QuickMatch, gameMetadata.Mode);
+            Assert.Equal(Map.KafeDostoyevsky, gameMetadata.Map);
+        }
+
+        [Fact]
+        public void ReadGameMetadata_ShouldReturnDefault_WhenVersionNotFound()
+        {
+            var fakeData = new List<string> { "random", "data" };
+
+            GameMetadata gameMetadata = reader.ReadGameMetadata(fakeData);
+
+            Assert.Equal(string.Empty, gameMetadata.Version);
+            Assert.Equal(string.Empty, gameMetadata.DateTime);
+            Assert.Equal(default(GameMode), gameMetadata.Mode);
+            Assert.Equal(default(Map), gameMetadata.Map);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace R6ReadRecFile.Core.Interfaces
 {
     public interface IRecParser
     {
-        RecFile Parse(string filePath);
+        RecFile Parse(FileStream file);
     }
 }

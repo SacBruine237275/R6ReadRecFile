@@ -5,7 +5,7 @@
         public string FileName {  get; set; }=string.Empty;
         public long FileSize {  get; set; }
 
-        public GameMetada Metada { get; set; }
+        public GameMetadata Metadata { get; set; }
         public List<PlayerInfo> Players { get; set; }
     }
 }

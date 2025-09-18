@@ -7,15 +7,6 @@ namespace R6ReadRecFile.Core.Tests.Services
     {
 
         [Fact]
-        public void Parse_ShouldThrow_WhenFileDoesNotExist()
-        {
-            var parser = new RecParser();
-
-            var ex = Assert.Throws<FileNotFoundException>(() => parser.Parse("not_existing.rec"));
-            Assert.Contains("not found", ex.Message);
-        }
-
-        [Fact]
         public void Parse_ShouldReturnPlayers_WhenFileIsValid()
         {
             List<PlayerInfo> expected = new List<PlayerInfo> {
@@ -50,7 +41,8 @@ namespace R6ReadRecFile.Core.Tests.Services
 
             var parser = new RecParser();
 
-            var actual = parser.Parse(tempFile);
+            using var file = new FileStream(tempFile, FileMode.Open);
+            var actual = parser.Parse(file);
 
             Assert.NotNull(actual);
             Assert.NotNull(actual.Players);
@@ -59,6 +51,7 @@ namespace R6ReadRecFile.Core.Tests.Services
             Assert.All(expected, expectedItem => Assert.Contains(actual.Players, actualItem => actualItem.Operator == expectedItem.Operator));
             Assert.All(expected, expectedItem => Assert.Contains(actual.Players, actualItem => actualItem.Team == expectedItem.Team));
 
+            file.Close();
             File.Delete(tempFile);
         }
     }
