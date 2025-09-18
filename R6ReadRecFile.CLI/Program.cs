@@ -45,6 +45,9 @@ namespace R6ReadRecFile.CLI
             }
             using var file = new FileStream(pathFile, FileMode.Open);
             var rec = recParser.Parse(file);
+            file.Close();
+            var zstdParser = new ZSTDParser();
+            zstdParser.Parse(pathFile);
             Console.WriteLine(rec.Metadata.ToString() + "\n");
             foreach (var player in rec.Players)
             {
