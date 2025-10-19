@@ -98,6 +98,20 @@ namespace R6ReadRecFile.CLI
             }
             using var file = new FileStream(pathFile, FileMode.Open);
             var rec = recParser.Parse(file);
+
+            file.Close();
+            var zstdParser = new ZSTDParser();
+            var zstdRec = zstdParser.Parse(pathFile);
+            var zstdPlayersByName = zstdRec.Players.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var player in rec.Players)
+            {
+                if (zstdPlayersByName.TryGetValue(player.Name, out var matchingZstdPlayer))
+                {
+                    player.Spawn = matchingZstdPlayer.Spawn;
+                }
+            }
+
             if (!silent)
             {
                 Console.WriteLine(rec.Metadata.ToString() + "\n");
