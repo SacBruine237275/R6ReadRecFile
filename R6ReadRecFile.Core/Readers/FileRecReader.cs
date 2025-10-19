@@ -1,7 +1,6 @@
 using R6ReadRecFile.Core.Enums;
 using R6ReadRecFile.Core.Models;
 using R6ReadRecFile.Core.Utils;
-using System.IO;
 
 namespace R6ReadRecFile.Core.Readers
 {
@@ -15,6 +14,7 @@ namespace R6ReadRecFile.Core.Readers
             _reader = new BinaryReader(stream);
         }
 
+        [Obsolete("ReadPlayers should be migrated to ZSTDRecReader.")]
         public List<PlayerInfo> ReadPlayers(List<string> extractedStrings)
         {
             List<PlayerInfo>players = new List<PlayerInfo>();

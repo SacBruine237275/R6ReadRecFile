@@ -9,8 +9,10 @@ namespace R6ReadRecFile.Core.Services
         public RecFile Parse(string pathFile)
         {
             ZSTDRecReader zSTDParser = new ZSTDRecReader(pathFile);
-            zSTDParser.GetData();
-            return null;
+            byte[] fileData = File.ReadAllBytes(pathFile);
+            var rec = new RecFile();
+            rec.Players=ZSTDRecReader.ExtractPlayerInfo(fileData, "output.bin");
+            return rec;
         }
 
         public RecFile Parse(FileStream file)
