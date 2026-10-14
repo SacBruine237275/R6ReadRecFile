@@ -11,7 +11,7 @@ namespace R6ReadRecFile.Core.Readers
             this.filePath = filePath;
         }
 
-        public static List<PlayerInfo> ExtractPlayerInfo(byte[] fileData, string binaryOutputPath)
+        public static List<PlayerInfo> ExtractPlayerInfo(byte[] fileData)
         {
             var result= new List<PlayerInfo>();
             var reader = new ZSTDHelper(fileData);
@@ -28,15 +28,21 @@ namespace R6ReadRecFile.Core.Readers
                     player.Spawn = spawn;
 
                 }
-                result.Add(player);
+                if (!result.Any(p => p.Name == player.Name)) // Player names reappear later in the stream (kill feed...)
+                    result.Add(player);
             }
-            string defenserSpawn = "";
-            do
+            string? defenserSpawn = null;
+            while (reader.Seek(spawnIndicator))
             {
-                reader.Seek(spawnIndicator);
-                defenserSpawn=reader.ReadString();
-            } while (!defenserSpawn.Contains("<br/>"));
-            result.Where(p => string.IsNullOrEmpty(p.Spawn)).ToList().ForEach(p => p.Spawn = defenserSpawn.Replace("<br/>", ", "));
+                string spawn = reader.ReadString();
+                if (spawn.Contains("<br/>"))
+                {
+                    defenserSpawn = spawn;
+                    break;
+                }
+            }
+            if (defenserSpawn != null)
+                result.Where(p => string.IsNullOrEmpty(p.Spawn)).ToList().ForEach(p => p.Spawn = defenserSpawn.Replace("<br/>", ", "));
             return result;
         }
     }

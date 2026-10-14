@@ -23,6 +23,9 @@ namespace R6ReadRecFile.Core.Utils
                 }
             }
 
+            if (sb.Length > 0)
+                results.Add(sb.ToString());
+
             return results;
         }
     }
