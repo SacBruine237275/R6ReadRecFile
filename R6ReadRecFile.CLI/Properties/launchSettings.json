@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "R6ReadRecFile.CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "\"D:\\Ubisoft\\Tom Clancy's Rainbow Six Siege X\\MatchReplay\\Match-2026-09-20_20-18-08-8544\\Match-2026-09-20_20-18-08-8544-R01.rec\""
-    }
-  }
-}
