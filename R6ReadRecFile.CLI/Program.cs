@@ -109,6 +109,7 @@ namespace R6ReadRecFile.CLI
                 if (zstdPlayersByName.TryGetValue(player.Name, out var matchingZstdPlayer))
                 {
                     player.Spawn = matchingZstdPlayer.Spawn;
+                    player.Stats = matchingZstdPlayer.Stats;
                 }
             }
 
