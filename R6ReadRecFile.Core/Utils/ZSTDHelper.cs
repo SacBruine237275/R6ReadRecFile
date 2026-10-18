@@ -9,18 +9,25 @@ namespace R6ReadRecFile.Core.Utils
         private int _offset;
         private static readonly byte[] ZstdMagic = { 0x28, 0xB5, 0x2F, 0xFD };
 
+        // Read position in the decompressed data
+        public int Position
+        {
+            get => _offset;
+            set => _offset = value;
+        }
+
         public ZSTDHelper(byte[] data)
             : this(data, null)
         {
         }
 
-        // onBlockDecompressed : appelé pour chaque bloc décompressé (index, contenu)
+        // onBlockDecompressed: called for each decompressed block (index, content)
         protected ZSTDHelper(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
         {
             _data = DecompressAllZstdBlocks(data, onBlockDecompressed);
         }
 
-        // Décompresse tous les blocs Zstd dans les données
+        // Decompresses all Zstd blocks in the data
         private static byte[] DecompressAllZstdBlocks(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
         {
             using var result = new MemoryStream();
@@ -50,7 +57,7 @@ namespace R6ReadRecFile.Core.Utils
             return result.ToArray();
         }
 
-        // Cherche un motif et retourne sa position
+        // Searches for a pattern and moves the position right after it
         public bool Seek(byte[] pattern)
         {
             int index = _data.AsSpan(_offset).IndexOf(pattern);
@@ -60,7 +67,7 @@ namespace R6ReadRecFile.Core.Utils
             return true;
         }
 
-        // Lit une chaîne de caractères
+        // Reads a length-prefixed string
         public string ReadString()
         {
             int size = ReadByte();
@@ -68,7 +75,7 @@ namespace R6ReadRecFile.Core.Utils
             return Encoding.UTF8.GetString(bytes);
         }
 
-        // Lit un certain nombre d'octets
+        // Reads a given number of bytes
         public byte[] ReadBytes(int n)
         {
             var result = new byte[n];
@@ -77,20 +84,27 @@ namespace R6ReadRecFile.Core.Utils
             return result;
         }
 
-        // Lit un octet
+        // Reads a byte
         public byte ReadByte()
         {
             return _data[_offset++];
         }
 
-        // Lit un uint64
+        // Reads a uint32
+        public uint ReadUInt32()
+        {
+            var bytes = ReadBytes(4);
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+
+        // Reads a uint64
         public ulong ReadUint64()
         {
             var bytes = ReadBytes(8);
             return BitConverter.ToUInt64(bytes, 0);
         }
 
-        // Saute un certain nombre d'octets
+        // Skips a given number of bytes (negative to go back)
         public void Skip(int n)
         {
             _offset += n;
