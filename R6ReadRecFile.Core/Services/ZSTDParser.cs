@@ -11,7 +11,7 @@ namespace R6ReadRecFile.Core.Services
             ZSTDRecReader zSTDParser = new ZSTDRecReader(pathFile);
             byte[] fileData = File.ReadAllBytes(pathFile);
             var rec = new RecFile();
-            rec.Players=ZSTDRecReader.ExtractPlayerInfo(fileData, "output.bin");
+            rec.Players = ZSTDRecReader.ExtractPlayerInfo(fileData);
             return rec;
         }
 

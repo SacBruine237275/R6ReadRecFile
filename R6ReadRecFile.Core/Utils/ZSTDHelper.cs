@@ -10,39 +10,41 @@ namespace R6ReadRecFile.Core.Utils
         private static readonly byte[] ZstdMagic = { 0x28, 0xB5, 0x2F, 0xFD };
 
         public ZSTDHelper(byte[] data)
+            : this(data, null)
         {
-            _data = DecompressAllZstdBlocks(data);
+        }
+
+        // onBlockDecompressed : appelé pour chaque bloc décompressé (index, contenu)
+        protected ZSTDHelper(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
+        {
+            _data = DecompressAllZstdBlocks(data, onBlockDecompressed);
         }
 
         // Décompresse tous les blocs Zstd dans les données
-        private byte[] DecompressAllZstdBlocks(byte[] data)
+        private static byte[] DecompressAllZstdBlocks(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
         {
-            var result = new List<byte>();
+            using var result = new MemoryStream();
+            using var decompressor = new Decompressor();
             int pos = 4; // Skip header
+            int blockCount = 0;
             while (pos < data.Length - 4)
             {
-                if (data[pos] == ZstdMagic[0] &&
-                    data[pos + 1] == ZstdMagic[1] &&
-                    data[pos + 2] == ZstdMagic[2] &&
-                    data[pos + 3] == ZstdMagic[3])
+                int index = data.AsSpan(pos).IndexOf(ZstdMagic);
+                if (index < 0)
+                    break;
+                pos += index;
+                try
                 {
-                    try
-                    {
-                        int compressedSize = BitConverter.ToInt32(data, pos - 4);
-                        var decompressor = new Decompressor();
-                        var compressed = new ReadOnlySpan<byte>(data, pos, compressedSize);
-                        var decompressed = decompressor.Unwrap(compressed);
-                        result.AddRange(decompressed.ToArray());
-                        pos += compressedSize;
-                    }
-                    catch
-                    {
-                        pos++;
-                    }
+                    int compressedSize = BitConverter.ToInt32(data, pos - 4);
+                    var compressed = new ReadOnlySpan<byte>(data, pos, compressedSize);
+                    var decompressed = decompressor.Unwrap(compressed);
+                    result.Write(decompressed);
+                    onBlockDecompressed?.Invoke(blockCount++, decompressed);
+                    pos += compressedSize;
                 }
-                else
+                catch (Exception ex) when (ex is ZstdException or ArgumentException)
                 {
-                    pos++;
+                    pos++; // False positive: magic bytes inside data, or invalid size
                 }
             }
             return result.ToArray();
@@ -51,15 +53,11 @@ namespace R6ReadRecFile.Core.Utils
         // Cherche un motif et retourne sa position
         public bool Seek(byte[] pattern)
         {
-            for (int i = _offset; i < _data.Length - pattern.Length; i++)
-            {
-                if (_data.Skip(i).Take(pattern.Length).SequenceEqual(pattern))
-                {
-                    _offset = i + pattern.Length;
-                    return true;
-                }
-            }
-            return false;
+            int index = _data.AsSpan(_offset).IndexOf(pattern);
+            if (index < 0)
+                return false;
+            _offset += index + pattern.Length;
+            return true;
         }
 
         // Lit une chaîne de caractères
