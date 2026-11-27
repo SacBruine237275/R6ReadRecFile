@@ -50,6 +50,10 @@ You can add any CLI option to `commandLineArgs` (for example `-json -s`). Never 
 * Use English for variable and method names to facilitate international collaboration.
 * Comment complex parts of the code.
 
+## 🤖 Use of AI
+
+Using AI to help write code is allowed, but it must be stated in the PR description: say which parts were generated or heavily assisted by AI. You remain responsible for the code you submit, so make sure you understand it and that it is tested.
+
 We look forward to your contributions!
 
 ---
@@ -107,5 +111,9 @@ Vous pouvez ajouter n'importe quelle option du CLI dans `commandLineArgs` (par e
 * Nous suivons les conventions de style C# standard de Microsoft.
 * Utilisez les noms de variables et de méthodes en anglais pour faciliter la collaboration internationale.
 * Commentez les parties complexes du code.
+
+## 🤖 Utilisation de l'IA
+
+L'utilisation de l'IA pour écrire du code est autorisée, mais elle doit être signalée dans la description de la PR : précisez quelles parties ont été générées ou fortement assistées par l'IA. Vous restez responsable du code que vous proposez, assurez-vous donc de le comprendre et qu'il soit testé.
 
 Nous sommes impatients de voir vos contributions !
