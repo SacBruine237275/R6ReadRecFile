@@ -9,60 +9,65 @@ namespace R6ReadRecFile.Core.Utils
         private int _offset;
         private static readonly byte[] ZstdMagic = { 0x28, 0xB5, 0x2F, 0xFD };
 
-        public ZSTDHelper(byte[] data)
+        // Read position in the decompressed data
+        public int Position
         {
-            _data = DecompressAllZstdBlocks(data);
+            get => _offset;
+            set => _offset = value;
         }
 
-        // Décompresse tous les blocs Zstd dans les données
-        private byte[] DecompressAllZstdBlocks(byte[] data)
+        public ZSTDHelper(byte[] data)
+            : this(data, null)
         {
-            var result = new List<byte>();
+        }
+
+        // onBlockDecompressed: called for each decompressed block (index, content)
+        protected ZSTDHelper(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
+        {
+            _data = DecompressAllZstdBlocks(data, onBlockDecompressed);
+        }
+
+        // Decompresses all Zstd blocks in the data
+        private static byte[] DecompressAllZstdBlocks(byte[] data, Action<int, ReadOnlySpan<byte>>? onBlockDecompressed)
+        {
+            using var result = new MemoryStream();
+            using var decompressor = new Decompressor();
             int pos = 4; // Skip header
+            int blockCount = 0;
             while (pos < data.Length - 4)
             {
-                if (data[pos] == ZstdMagic[0] &&
-                    data[pos + 1] == ZstdMagic[1] &&
-                    data[pos + 2] == ZstdMagic[2] &&
-                    data[pos + 3] == ZstdMagic[3])
+                int index = data.AsSpan(pos).IndexOf(ZstdMagic);
+                if (index < 0)
+                    break;
+                pos += index;
+                try
                 {
-                    try
-                    {
-                        int compressedSize = BitConverter.ToInt32(data, pos - 4);
-                        var decompressor = new Decompressor();
-                        var compressed = new ReadOnlySpan<byte>(data, pos, compressedSize);
-                        var decompressed = decompressor.Unwrap(compressed);
-                        result.AddRange(decompressed.ToArray());
-                        pos += compressedSize;
-                    }
-                    catch
-                    {
-                        pos++;
-                    }
+                    int compressedSize = BitConverter.ToInt32(data, pos - 4);
+                    var compressed = new ReadOnlySpan<byte>(data, pos, compressedSize);
+                    var decompressed = decompressor.Unwrap(compressed);
+                    result.Write(decompressed);
+                    onBlockDecompressed?.Invoke(blockCount++, decompressed);
+                    pos += compressedSize;
                 }
-                else
+                catch (Exception ex) when (ex is ZstdException or ArgumentException)
                 {
-                    pos++;
+                    pos++; // False positive: magic bytes inside data, or invalid size
                 }
             }
             return result.ToArray();
         }
 
-        // Cherche un motif et retourne sa position
+        // Searches for a pattern and moves the position right after it
         public bool Seek(byte[] pattern)
         {
-            for (int i = _offset; i < _data.Length - pattern.Length; i++)
-            {
-                if (_data.Skip(i).Take(pattern.Length).SequenceEqual(pattern))
-                {
-                    _offset = i + pattern.Length;
-                    return true;
-                }
-            }
-            return false;
+            int index = _data.AsSpan(_offset).IndexOf(pattern);
+            if (index < 0)
+                return false;
+            _offset += index + pattern.Length;
+            return true;
         }
 
-        // Lit une chaîne de caractères
+        // Reads a length-prefixed string
         public string ReadString()
         {
             int size = ReadByte();
@@ -70,7 +75,7 @@ namespace R6ReadRecFile.Core.Utils
             return Encoding.UTF8.GetString(bytes);
         }
 
-        // Lit un certain nombre d'octets
+        // Reads a given number of bytes
         public byte[] ReadBytes(int n)
         {
             var result = new byte[n];
@@ -79,20 +84,27 @@ namespace R6ReadRecFile.Core.Utils
             return result;
         }
 
-        // Lit un octet
+        // Reads a byte
         public byte ReadByte()
         {
             return _data[_offset++];
         }
 
-        // Lit un uint64
+        // Reads a uint32
+        public uint ReadUInt32()
+        {
+            var bytes = ReadBytes(4);
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+
+        // Reads a uint64
         public ulong ReadUint64()
         {
             var bytes = ReadBytes(8);
             return BitConverter.ToUInt64(bytes, 0);
         }
 
-        // Saute un certain nombre d'octets
+        // Skips a given number of bytes (negative to go back)
         public void Skip(int n)
         {
             _offset += n;

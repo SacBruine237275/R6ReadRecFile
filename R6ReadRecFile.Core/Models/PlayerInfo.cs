@@ -9,13 +9,13 @@ namespace R6ReadRecFile.Core.Models
         public string Team {  get; set; }
 
         public string Spawn { get; set; }
-       /* public int Kill {  get; set; }
-        public int Death { get; set; }
-        public int Assist { get; set; }*/
+        public Stats Stats { get; set; } = new Stats();
+
+        public int Id;
 
         public override string ToString()
         {
-            return $"Pseudo: {Name} | Operator: {Operator} | Team: {Team} | Spawn: {Spawn}";
+            return $"Pseudo: {Name} | Operator: {Operator} | Team: {Team} | Spawn: {Spawn} | Stats: {Stats.Kill}/{Stats.Death}/{Stats.Assist} | Score: {Stats.Score}";
         }
     }
 }

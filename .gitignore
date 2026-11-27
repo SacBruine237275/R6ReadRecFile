@@ -4,3 +4,7 @@
 bin/
 obj/
 .vs/
+
+### Visual Studio ###
+# Local debug profile (contains a personal path to a .rec file)
+**/Properties/launchSettings.json
