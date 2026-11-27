@@ -127,7 +127,8 @@ namespace R6ReadRecFile.CLI
         }
         private static void ShowHelp()
         {
-            Console.WriteLine("Usage:    R6ReadRecFile.CLI.exe \"<path_to_file.rec>\"");
+            string exeName = Path.GetFileName(Environment.ProcessPath) ?? "R6ReadRecFile";
+            Console.WriteLine($"Usage:    {exeName} \"<path_to_file.rec>\"");
             Console.WriteLine("Note:     Make sure to put the file path in double quotes if it contains spaces.\n");
             Console.WriteLine("-r        Recursive mode: provide a folder, all .rec files inside will be parsed.\n");
             Console.WriteLine("-json     Generate a JSON output. You can optionally specify the JSON file name.");

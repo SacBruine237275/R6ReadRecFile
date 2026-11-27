@@ -29,27 +29,27 @@ jobs:
 
       - name: Publish Linux
         run: |
-          dotnet publish R6ReadRecFile.CLI -c Release -r linux-x64 --self-contained true -o ./publish/linux
-          zip -r release-linux.zip ./publish/linux
-          tar -czf release-linux.tar.gz -C ./publish linux
+          dotnet publish R6ReadRecFile.CLI -c Release -r linux-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:DebugType=none -o ./publish/linux
+          mv ./publish/linux/R6ReadRecFile.CLI ./R6ReadRecFile-linux-x64
 
       - name: Publish Windows
         run: |
-          dotnet publish R6ReadRecFile.CLI -c Release -r win-x64 --self-contained true -o ./publish/windows
-          zip -r release-windows.zip ./publish/windows
-          tar -czf release-windows.tar.gz -C ./publish windows
+          dotnet publish R6ReadRecFile.CLI -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:DebugType=none -o ./publish/windows
+          mv ./publish/windows/R6ReadRecFile.CLI.exe ./R6ReadRecFile-win-x64.exe
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v0.1.5
-          name: Release v0.1.5
+          tag_name: v0.2.0
+          name: Release v0.2.0
           body: "Automatic release from main branch."
           files: |
-            release-linux.zip
-            release-linux.tar.gz
-            release-windows.zip
-            release-windows.tar.gz
+            R6ReadRecFile-linux-x64
+            R6ReadRecFile-win-x64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
