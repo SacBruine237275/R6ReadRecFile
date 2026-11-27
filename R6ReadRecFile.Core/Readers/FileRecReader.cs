@@ -14,7 +14,6 @@ namespace R6ReadRecFile.Core.Readers
             _reader = new BinaryReader(stream);
         }
 
-        [Obsolete("ReadPlayers should be migrated to ZSTDRecReader.")]
         public List<PlayerInfo> ReadPlayers(List<string> extractedStrings)
         {
             List<PlayerInfo>players = new List<PlayerInfo>();
